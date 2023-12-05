@@ -7,7 +7,10 @@ import plotly.express as px
 import pandas as pd
 
 #Step1. Data Import
-df = pd.read_csv('.\\data\\meme_all_data.csv')
+#df = pd.read_csv('.\\data\\meme_all_data.csv')
+df = pd.read_csv('/home/ubuntu/app_aptdata/apt_trading_in/data/meme_all_data.csv')
+
+
 df = df.astype({'price':'int64'})
 year_aixs = [y for y in range(2006,2023)]
 
