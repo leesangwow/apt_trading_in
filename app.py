@@ -7,8 +7,8 @@ import plotly.express as px
 import pandas as pd
 
 #Step1. Data Import
-#df = pd.read_csv('.\\data\\meme_all_data.csv')
-df = pd.read_csv('/home/ubuntu/app_aptdata/apt_trading_in/data/meme_all_data.csv')
+#df = pd.read_csv('D:\\Sangwoo\\00.자기관리_인생계획\\자기관리_인생계획\\2.부동산공부\\00.연구자료\\data\\meme_all_data.csv')
+df = pd.read_csv('/home/ubuntu/source_data/meme_all_data.csv')
 
 
 df = df.astype({'price':'int64'})
