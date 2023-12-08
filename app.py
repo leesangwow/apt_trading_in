@@ -222,5 +222,5 @@ def update_datatable(dong,gu,year,city):
     
 #Step6 Run App
 if __name__ == '__main__':
-    app.run(debug=True)
-    #app.run(host='0.0.0.0',port=8050,debug=True)
+    #app.run(debug=True)
+    app.run(host='0.0.0.0',port=8050)
