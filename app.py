@@ -30,39 +30,28 @@ server = app.server
 ##################
 #Step3. Dash Components
 ##################
-header = html.H1(
-    "APT Big Data", style={'textAlign':'center'}
+
+## Header ##
+header = html.H1("아파트 매수 인사이트", className='mt-4',style={'textAlign':'center'})
+
+
+## Dropdowns ##
+dropdown_si = dbc.Col(
+    dcc.Dropdown(
+        id="filter-city",
+        options=[
+            {"label": city, "value": city}
+            for city in df.city.unique()
+        ]
+    )
 )
 
-dropdown_si = html.Div(
-    [
-        dbc.Label("Select City"),
-        dcc.Dropdown(
-            id="filter-city",
-            options=[
-                {"label": city, "value": city}
-                for city in df.city.unique()
-            ],
-        ),
-    ],
+dropdown_gu = dbc.Col(
+    dcc.Dropdown(id="filter-gu")
 )
 
-dropdown_gu = html.Div(
-    [
-        dbc.Label("Select Second Add"),
-        dcc.Dropdown(
-            id="filter-gu",
-        ), 
-    ],
-)
-
-dropdown_dong = html.Div(
-    [
-        dbc.Label("Select third Add"),
-        dcc.Dropdown(
-            id="filter-dong",
-        ),
-    ],
+dropdown_dong = dbc.Col(
+    dcc.Dropdown(id="filter-dong")
 )
 
 dropdown_year = html.Div(
@@ -70,56 +59,96 @@ dropdown_year = html.Div(
         dbc.Label("Select Years"),
         dcc.Dropdown(
             id = "filter-year",
-            options = [{"label": year, "value": year} for year in df.year.unique()]
+            options = [
+                {"label": year, "value": year} 
+                for year in df.year.unique()]
             )
     ]
 )
 
+## Contents Wrappers ##
+search_contents = html.Div(
+    [
+        html.Div(
+            html.I(
+                 "지역 선택(도시/지역구/동)",
+            ),className="card-header",style={"background":"#DFB3A1"}
+        ),
+        html.Div([
+            dbc.Row([
+                dropdown_si,
+                dropdown_gu,
+                dropdown_dong
+            ])
+        ],className="card-body",style={"background":'#F3F2DC'})
+    ],className='card mb-4'
+)
+
 graph_contents = html.Div(
-    dcc.Graph(id='graph-content')
-    )
+    [
+        html.Div(
+            html.I(
+                "트렌드 차트",
+            ),className="card-header",style={"background":"#E0B787"}),
+
+        html.Div(
+            dcc.Graph(
+                id='graph-content',
+                className='card mb-4'
+            ),className="card-body",style={"background":'#F3F2DC'}
+        )
+    ],className='card mb-4'
+)
 
 datatable_contents = html.Div(
     [
-        html.Div(id = 'title-datatable'),
+        dbc.Container(
+            html.I(
+                id = 'title-datatable', 
+            ),className='card-header',style={"background":"#E0B787"}),
+
         html.Div(
-            dash_table.DataTable(
-                id = 'datatable-top10',
-                page_size=10,
-                filter_action='native',
-                sort_action='native',
-            )
-        )
-    ], id = 'datatable-contents'
-    )
+            [
+                dropdown_year,
+                dash_table.DataTable(
+                    id = 'datatable-top10',
+                    page_size=10,
+                    filter_action='native',
+                    sort_action='native',
+                    style_table={'overflowX': 'auto'}
+                )
+            ],className="card-body",style={"background":'#F3F2DC'}
+        ),
+    ],className='card mb-4'
+)
 
-tab_trade_volumn = dbc.Tab(label="거래량", tab_id="tab-tradevol")
-tab_pirce_avg = dbc.Tab(label="평균가", tab_id="tab-priceavg")
+# tab_trade_volumn = dbc.Tab(label="거래량", tab_id="tab-tradevol")
+# tab_pirce_avg = dbc.Tab(label="평균가", tab_id="tab-priceavg")
 
+# html.h1("contents",style={'':'','':''}, className='mt-4')
+# html.Div([
+#     html.Div('Example Div', style={'color': 'blue', 'fontSize': 14}),
+#     html.P('Example P', className='my-class', id='my-p-element')
+# ]
+# style = 딕셔너리
+# class = className
+# id = id
 
 ##################
 #step4 Dash Layout
 ##################
+
 app.layout = dbc.Container(
     [
         header,
         html.Hr(),
-        dbc.Row([
-            dbc.Col(dropdown_si),
-            dbc.Col(dropdown_gu),
-            dbc.Col(dropdown_dong)
-        ],className="g-0"),
-        #dbc.Tabs([tab_trade_volumn,tab_pirce_avg],id = "tabs",active_tab = "tab-tradevol"),
-        dbc.Row([
-            # dbc.Col([ 
-            #     dbc.Row([dropdown_year]), #연도
-            #     dbc.Row([datatable_contents]), #테이블
-            #  ],md=8),
-            # dbc.Col([graph_contents],md=4), #그래프   
-            dbc.Row([dropdown_year]), #연도
-            dbc.Row([datatable_contents]),
-            dbc.Row([graph_contents]), #테이블   
-        ],className="g-0"),
+        dbc.Container(
+            [
+                search_contents,
+                datatable_contents,
+                graph_contents, 
+            ],className="container-fluid px-4"
+            ),
     ],
 )
 
@@ -252,7 +281,7 @@ def update_datatable(dong,gu,year,city):
     ]
     data = groupby_df.to_dict('records')
 
-    year_title = "Rank in " + str(year)
+    year_title = str(year)+"년 순위" 
 
     return cols, data, style_cell_conditional, year_title
 
@@ -261,5 +290,5 @@ def update_datatable(dong,gu,year,city):
 #Step6 Run App
 ##################
 if __name__ == '__main__':
-    #app.run(debug=True)
-    app.run(host='0.0.0.0',port=8050)
+    app.run(debug=True)
+    #app.run(host='0.0.0.0',port=8050)
